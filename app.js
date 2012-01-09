@@ -1,55 +1,42 @@
+/*
+ 	Basic Server Side request && response off a node
+*/
 
-/**
- * Module dependencies.
- */
+var PORT = 7337;
+var fwk = require('./core/commandFramework.js');
+var cmds = require('./core/commands.js').CMDS;
+var utils = require('./core/utils.js');
 
-var express = require('express')
-  , routes = require('./routes')
+var express = require('express');
+var app = express.createServer();
 
-var app = module.exports = express.createServer();
+app.get('/', function(req, res)
+		     {
+				var result = fwk.processRequest(req);
+				var msg = result;
+				
+				res.send(msg);
+		     }
+);
 
-// Configuration
+app.listen(PORT);
 
-app.configure(function(){
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.set('view options', {
-    layout: false
-  });
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-//  app.use(express.cookieParser());
-//  app.use(express.session({ secret: 'your secret here' }));
-  app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
-});
-
-app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
-});
-
-app.configure('production', function(){
-  app.use(express.errorHandler()); 
-});
-
-//
-//
-var users = [ 
-      { name: "foo", email: "foo@yahoo.com" }
-    , { name: "bar", email: "bar@bahoo.com" } 
-    , { name: "dee", email: "dee@bahoo.com" } 
-];
-
-
-// Routes
-
-app.get('/', routes.index);
-
-app.get('/users', function(req, res){
-  res.render('users', { users: users });
-});
+console.log("Node Peer started and listening on port " + PORT + " at [" + utils.TheUte().getTimestamp() + "]");
 
 
 
-app.listen(3000);
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
