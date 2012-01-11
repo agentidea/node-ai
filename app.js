@@ -4,7 +4,6 @@
 
 var PORT = 7337;
 var fwk = require('./core/commandFramework.js');
-//var cmds = require('./core/commands.js').CMDS;
 var utils = require('./core/utils.js');
 
 var express = require('express');
@@ -12,16 +11,13 @@ var app = express.createServer();
 
 app.get('/', function(req, res)
 		     {
-				var result = fwk.processRequest("req");
-				var msg = result;
-				
-				res.send(msg);
+				res.send(fwk.processRequest(req));
 		     }
 );
 
 app.listen(PORT);
 
-console.log("Node Peer started and listening on port " + PORT + " at [" + utils.TheUte().getTimestamp() + "]");
+console.log("Node-AI Peer started and listening on port " + PORT + " at [" + utils.TheUte().getTimestamp() + "]");
 
 
 
