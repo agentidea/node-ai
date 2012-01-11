@@ -121,11 +121,22 @@ if (!FWK) {
 			};
 			
 			
-			/*var paramString = "var _param = {'" + aName + "':aVal };";
-			eval(paramString);
-			if(_param){
-				m.parameters.push(_param);	
-			}
+			/*
+			 NOTE: Parameter is indexed into JS Object so called like this
+			 
+			 var favs = itinerary.outCommands[0]["parameters"]["favs"]["value"];
+			 var age = itinerary.outCommands[0].parameters.age.value;
+			 var ageConstraint = itinerary.outCommands[0].parameters['age'].constraint;
+			  
+			  parameters : {
+			  
+			  		"age" : { "value":777 , "constraint":"int" },
+			  		"favs" : { "value":['green eggs','ham'] }
+			  
+			  }
+			 
+			  parameter extension by adding name/value pair as in constraint eg above
+			  
 			*/
 		}
 		
