@@ -17,22 +17,29 @@ exports.processRequest = function( req, res ){
 	//normally a request would be passed here
 	//req would be base64 urlencoded request
 	//bypass that for now
+	
+	
 				
 	var reqMacro = FWK.newMacro("reportOnRequest");
 	FWK.addParam(reqMacro,"datetime",timestamp);
 	FWK.addParam(reqMacro,"request",req);
 
 	var itinerary = FWK.newItinerary(reqMacro);
-
+	
+	//show say example from code ...
+	var testSay = FWK.say("TestSay","are","we","getting","better");
+	itinerary.inCommands.push(testSay);
+	
+	
 	FWK.processItinerary( itinerary );
+	
 	FWK.debugItinerary( itinerary );
 
 	var returnDiv = itinerary.outCommands[0].parameters["message"].value;
 	var good = itinerary.outCommands[0].parameters["good"].value;
-	
 	returnDiv += "<div style='color:green;font-size:22pt;'> Life is very " + good + "</div>";
 	
-	console.log(itinerary.outCommands[0].parameters);
+	//console.log(itinerary.outCommands[0].parameters);
 
 	return  returnDiv;
 
@@ -43,6 +50,39 @@ var FWK;
 if (!FWK) {
 	FWK = {
 		
+		say: function(){
+			/* aka parseCommandFromStdArgs */
+			 var commandName = null;
+			 var i;
+			 var argLen = arguments.length;
+			 
+			 if(argLen > 0)
+			 {
+			 	commandName = arguments[0];
+			 	
+			 	var m = FWK.newMacro(commandName);
+				var sayString = null;
+				
+				sayString = commandName + " ( ";
+				
+			 	for(i=1;i<argLen; i += 1) {
+			 		FWK.addParam(m,"arg_" + i,arguments[i]);
+					
+					sayString += " " + arguments[i];
+			 	}
+				
+				sayString = sayString + " )";
+			 
+			    console.log("SAY " + sayString);
+				
+				return m;
+
+			 }
+			 else
+			 {
+			 	return null;
+			 }
+		},
 		processItinerary: function ( itinerary ){
 			
 			for(var inputCommand in itinerary.inCommands){
@@ -93,14 +133,16 @@ if (!FWK) {
 		debugCommandList: function (commandList ,label){
 			
 			console.log("  " + label);
-			
 			for( var commandIndex in commandList)
 			{
 				var tmpCommand = commandList[commandIndex];
-				
 				console.log("   COMMAND: " + tmpCommand.name);
-				
-				
+				for(var param in tmpCommand.parameters){
+					console.log( "               parameter:" + param );
+					for(var paramAttribute in tmpCommand.parameters[param]){
+						console.log("                    attribute:" + paramAttribute);
+					}
+				}
 			}
 		},
 		
@@ -137,6 +179,9 @@ if (!FWK) {
 			 
 			  parameter extension by adding name/value pair as in constraint eg above
 			  
+			  in cases where parameters are passed say on command line via FWK.say() , they should be added
+			  via arg_0 .. arg_N format ... that way position can be maintained.
+			  
 			*/
 		}
 		
@@ -147,6 +192,14 @@ if (!FWK) {
 var CMDS = (function (commands) {
  	var commands = commands || {};
 
+	 commands.TestSay = function(macro, itinerary){
+	 
+	 	//positional call ...
+	 	var arg_4 = macro.parameters["arg_4"]["value"];
+		console.log("in command TestSay " + arg_4);
+
+	 };
+	 
     commands.reportOnRequest = function(macro, itinerary){
 		
 				var dateTime = macro.parameters["datetime"]["value"];
