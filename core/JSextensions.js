@@ -13,6 +13,7 @@ String.prototype.rtrim = function() {
 
 if ("function" != typeof "".format) 
 // add format() if one does not exist already
+//http://stackoverflow.com/questions/1038746/equivalent-of-string-format-in-jquery
   String.prototype.format = (function() {
     var rx1 = /\{(\d|\d\d)\}/g, rx2 = /\d+/ ;
     return function() {
