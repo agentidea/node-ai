@@ -37,7 +37,13 @@ exports.processRequest = function( req, res ){
 
 	var returnDiv = itinerary.outCommands[0].parameters["message"].value;
 	var good = itinerary.outCommands[0].parameters["good"].value;
-	returnDiv += "<div style='color:green;font-size:22pt;'> Life is very " + good + "</div>";
+	var people = "peeps";
+	
+	//show good usage of format strings :) 
+	var msg = "{0} things happen to {0} {1}".format(good,people);
+	
+	
+	returnDiv += "<div style='color:green;font-size:22pt;'> Life is very " + msg + "</div>";
 	
 	//console.log(itinerary.outCommands[0].parameters);
 

@@ -11,6 +11,20 @@ String.prototype.rtrim = function() {
 	return this.replace(/\s+$/,"");
 }
 
+if ("function" != typeof "".format) 
+// add format() if one does not exist already
+  String.prototype.format = (function() {
+    var rx1 = /\{(\d|\d\d)\}/g, rx2 = /\d+/ ;
+    return function() {
+        var args = arguments;
+        return this.replace(rx1, function($0) {
+            var idx = 1 * $0.match(rx2)[0];
+            return args[idx] !== undefined ? args[idx] : (args[idx] === "" ? "" : $0);
+        });
+    }
+}());
+
+
 
 
 /*
