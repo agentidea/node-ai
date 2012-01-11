@@ -1,5 +1,5 @@
 // 
-// AgentIdea commandFramework Peer for JavaScript 
+// AgentIdea commandFramework Peer for JavaScript  UTF-8
 //
 
 
@@ -12,9 +12,8 @@ exports.processRequest = function( req, res ){
 
 
 	var timestamp = new Date();
-	console.log(" processing HTTP request @ ");
-	console.log( "                     " + timestamp );
-				
+	console.log(" processing HTTP request");
+			
 	//normally a request would be passed here
 	//req would be base64 urlencoded request
 	//bypass that for now
@@ -23,14 +22,19 @@ exports.processRequest = function( req, res ){
 	FWK.addParam(reqMacro,"datetime",timestamp);
 	FWK.addParam(reqMacro,"request",req);
 
-	var itinerary = FWK.newItinerary();
-	itinerary.inCommands.push( reqMacro );
+	var itinerary = FWK.newItinerary(reqMacro);
 
 	FWK.processItinerary( itinerary );
-
 	FWK.debugItinerary( itinerary );
 
-	return   " ai processed the request @" + timestamp;
+	var returnDiv = itinerary.outCommands[0].parameters["message"].value;
+	var good = itinerary.outCommands[0].parameters["good"].value;
+	
+	returnDiv += "<div style='color:green;font-size:22pt;'> Life is very " + good + "</div>";
+	
+	console.log(itinerary.outCommands[0].parameters);
+
+	return  returnDiv;
 
 };
 
@@ -63,24 +67,24 @@ if (!FWK) {
 			}
 		},
 
-		newItinerary : function()
+		newItinerary : function(startCommand)
 		{
-			return { inCommands:[],outCommands:[] };
+			return { inCommands:[startCommand],outCommands:[] };
 		},
 		
 		debugItinerary : function(itinerary)
 		{
-			console.log(" * ------------ * ");
+			console.log(" * ------ begin ------ * ");
 			console.log(" ");
 			console.log(" ");
 			
-			console.log(" COMMAND ITINERARY ")
+			console.log(" ITINERARY ")
 			FWK.debugCommandList(itinerary.inCommands , "INPUT");
 			FWK.debugCommandList(itinerary.outCommands, "OUTPUT");
 			
 			console.log(" ");
 			console.log(" ");
-			console.log(" * ------------ * ");
+			console.log(" * ------ end ------ * ");
 		
 
 			
@@ -94,15 +98,9 @@ if (!FWK) {
 			{
 				var tmpCommand = commandList[commandIndex];
 				
-				console.log("   " + tmpCommand.name);
+				console.log("   COMMAND: " + tmpCommand.name);
 				
-				for ( var paramIndex in tmpCommand.parameters)
-				{
-					var tmpParam = tmpCommand.parameters[paramIndex];
-					
-					console.log( "              " + tmpParam.name + " :: " + tmpParam.value);
-		
-				}
+				
 			}
 		},
 		
@@ -111,17 +109,24 @@ if (!FWK) {
 		newMacro: function(aName){
 			return {
 				name: aName,
-				parameters: []
+				parameters: {}
 			};
 			
 		},
 		
 		addParam: function(m, aName, aVal){
-			m.parameters.push(
 			
-			{name: aName,value: aVal}
+			m["parameters"][aName] = {
+				"value":aVal
+			};
 			
-			);
+			
+			/*var paramString = "var _param = {'" + aName + "':aVal };";
+			eval(paramString);
+			if(_param){
+				m.parameters.push(_param);	
+			}
+			*/
 		}
 		
 	};
@@ -133,13 +138,17 @@ var CMDS = (function (commands) {
 
     commands.reportOnRequest = function(macro, itinerary){
 		
-				var arg0 = macro.parameters[0].value;
-				msg = " first Command !!!!! ";
-				console.log(msg);
-		
+				var dateTime = macro.parameters["datetime"]["value"];
+				
+				msg = " <div style='background-color:yellow;color:red;'> " + dateTime + "</div>";
+				
+				//
+				// prepare return command
+				//
+				var good = "善";
 				var PassData = FWK.newMacro("PassData");
 				FWK.addParam(PassData,"message",msg);
-				FWK.addParam(PassData,"param2","777");
+				FWK.addParam(PassData,"good",good);
 				
 				itinerary.outCommands.push( PassData );
 
